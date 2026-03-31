@@ -1,0 +1,47 @@
+@model BudgetTracker.Models.Transaction
+
+@{
+    ViewData["Title"] = "Add Transaction";
+}
+
+<h2>Add Transaction</h2>
+
+<!-- asp-action posts the form to the Create POST action -->
+<form asp-action="Create" method="post">
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Description</label>
+        <input asp-for="Description" class="form-control" placeholder="e.g. Grocery shopping" />
+        <!-- Shows validation error message if Description is missing or too long -->
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Amount" class="form-label">Amount ($)</label>
+        <input asp-for="Amount" class="form-control" placeholder="e.g. 25.00" />
+        <!-- Shows validation error message if Amount is invalid -->
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Date" class="form-label">Date</label>
+        <input asp-for="Date" type="date" class="form-control" />
+        <!-- Shows validation error message if Date is missing -->
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label">Category Id</label>
+        <input asp-for="CategoryId" class="form-control" placeholder="e.g. 1" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save Transaction</button>
+    <!-- Go back to the list without saving -->
+    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+
+</form>
+
+@section Scripts {
+    <!-- Enables client-side validation (shows errors without a page reload) -->
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
