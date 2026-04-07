@@ -5,9 +5,9 @@ namespace BudgetTracker.Controllers
 {
     public class CategoriesController : Controller
     {
-        // Static list to store categories in memory (no database yet)
+        // Public static list so other controllers (like TransactionsController) can read the categories
         // "static" means the list is shared across all requests and persists while the app is running
-        private static List<Category> _categories = new List<Category>
+        public static List<Category> _categories = new List<Category>
         {
             // Some sample data to start with
             new Category { Id = 1, Name = "Groceries" },

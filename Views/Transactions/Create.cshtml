@@ -31,8 +31,15 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="CategoryId" class="form-label">Category Id</label>
-        <input asp-for="CategoryId" class="form-control" placeholder="e.g. 1" />
+        <label asp-for="CategoryId" class="form-label">Category</label>
+        <!-- Dropdown built from the categories list passed via ViewBag -->
+        <select asp-for="CategoryId" class="form-select">
+            <option value="">-- Select a Category --</option>
+            @foreach (var category in ViewBag.Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </select>
     </div>
 
     <button type="submit" class="btn btn-success">Save Transaction</button>

@@ -18,6 +18,10 @@ namespace BudgetTracker.Models
         [Required]
         public DateTime Date { get; set; }
 
-        public int CategoryId { get; set; }
+        // Nullable int means the user can leave Category blank (the ? makes it optional)
+        public int? CategoryId { get; set; }
+
+        // Store the category name so we can display it without looking it up each time
+        public string? CategoryName { get; set; }
     }
 }

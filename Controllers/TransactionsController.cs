@@ -10,9 +10,9 @@ namespace BudgetTracker.Controllers
         private static List<Transaction> _transactions = new List<Transaction>
         {
             // Some sample data to start with
-            new Transaction { Id = 1, Description = "Grocery shopping", Amount = 85.50m, Date = DateTime.Now.AddDays(-3), CategoryId = 1 },
-            new Transaction { Id = 2, Description = "Electric bill", Amount = 120.00m, Date = DateTime.Now.AddDays(-7), CategoryId = 2 },
-            new Transaction { Id = 3, Description = "Coffee", Amount = 4.75m, Date = DateTime.Now.AddDays(-1), CategoryId = 3 }
+            new Transaction { Id = 1, Description = "Grocery shopping", Amount = 85.50m, Date = DateTime.Now.AddDays(-3), CategoryId = 1, CategoryName = "Groceries" },
+            new Transaction { Id = 2, Description = "Electric bill", Amount = 120.00m, Date = DateTime.Now.AddDays(-7), CategoryId = 2, CategoryName = "Utilities" },
+            new Transaction { Id = 3, Description = "Coffee", Amount = 4.75m, Date = DateTime.Now.AddDays(-1), CategoryId = 3, CategoryName = "Entertainment" }
         };
 
         // GET: /Transactions
@@ -27,6 +27,8 @@ namespace BudgetTracker.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            // Pass the list of categories to the view so we can show a dropdown
+            ViewBag.Categories = CategoriesController._categories;
             return View();
         }
 
@@ -38,8 +40,22 @@ namespace BudgetTracker.Controllers
             // Check that all required fields are valid
             if (!ModelState.IsValid)
             {
-                // If validation failed, return to the form so the user can fix errors
+                // If validation failed, pass categories again so the dropdown still works
+                ViewBag.Categories = CategoriesController._categories;
                 return View(transaction);
+            }
+
+            // Look up the category name based on the selected CategoryId and save it on the transaction
+            if (transaction.CategoryId.HasValue)
+            {
+                var selectedCategory = CategoriesController._categories
+                    .FirstOrDefault(c => c.Id == transaction.CategoryId.Value);
+
+                // If we found a matching category, store its name
+                if (selectedCategory != null)
+                {
+                    transaction.CategoryName = selectedCategory.Name;
+                }
             }
 
             // Assign a new Id (just use current count + 1 for now)

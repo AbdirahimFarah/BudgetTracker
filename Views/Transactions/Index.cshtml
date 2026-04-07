@@ -25,6 +25,7 @@ else
                 <th>Description</th>
                 <th>Amount</th>
                 <th>Date</th>
+                <th>Category</th>
             </tr>
         </thead>
         <tbody>
@@ -36,6 +37,8 @@ else
                     <td>@transaction.Description</td>
                     <td>@transaction.Amount.ToString("C")</td>
                     <td>@transaction.Date.ToShortDateString()</td>
+                    <!-- Show the category name, or a dash if no category was selected -->
+                    <td>@(transaction.CategoryName ?? "-")</td>
                 </tr>
             }
         </tbody>
