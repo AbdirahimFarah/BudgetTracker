@@ -1,0 +1,48 @@
+@model List<BudgetTracker.Models.Budget>
+
+@{
+    ViewData["Title"] = "Budgets";
+}
+
+<h2>All Budgets</h2>
+
+<!-- Link to go to the Create form -->
+<p>
+    <a asp-action="Create" class="btn btn-primary">+ Add Budget</a>
+</p>
+
+<!-- Show a message if the list is empty -->
+@if (Model.Count == 0)
+{
+    <p>No budgets yet. Add one above!</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop through each budget and display it as a table row -->
+            @foreach (var budget in Model)
+            {
+                <tr>
+                    <td>@budget.Id</td>
+                    <td>@budget.Name</td>
+                    <td>@budget.Amount.ToString("C")</td>
+                    <!-- Show the category name, or a dash if no category was selected -->
+                    <td>@(budget.CategoryName ?? "-")</td>
+                    <td>@budget.StartDate.ToShortDateString()</td>
+                    <td>@budget.EndDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
