@@ -1,0 +1,28 @@
+@model BudgetTracker.Models.Category
+
+@{
+    ViewData["Title"] = "Add Category";
+}
+
+<h2>Add Category</h2>
+
+<!-- asp-action posts the form to the Create POST action -->
+<form asp-action="Create" method="post">
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Name</label>
+        <input asp-for="Name" class="form-control" placeholder="e.g. Groceries" />
+        <!-- Shows validation error message if Name is missing or too long -->
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save Category</button>
+    <!-- Go back to the list without saving -->
+    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+
+</form>
+
+@section Scripts {
+    <!-- Enables client-side validation (shows errors without a page reload) -->
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
