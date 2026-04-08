@@ -1,7 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using BudgetTracker.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Register AppDbContext with PostgreSQL.
+// GetConnectionString looks for "DefaultConnection" inside "ConnectionStrings" in appsettings.json.
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
