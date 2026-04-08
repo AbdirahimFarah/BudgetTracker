@@ -5,9 +5,9 @@ namespace BudgetTracker.Controllers
 {
     public class TransactionsController : Controller
     {
-        // Static list to store transactions in memory (no database yet)
+        // Public static list so other controllers (like HomeController) can read transactions
         // "static" means the list is shared across all requests and persists while the app is running
-        private static List<Transaction> _transactions = new List<Transaction>
+        public static List<Transaction> _transactions = new List<Transaction>
         {
             // Some sample data to start with
             new Transaction { Id = 1, Description = "Grocery shopping", Amount = 85.50m, Date = DateTime.Now.AddDays(-3), CategoryId = 1, CategoryName = "Groceries" },

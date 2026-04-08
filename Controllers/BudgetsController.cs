@@ -5,9 +5,9 @@ namespace BudgetTracker.Controllers
 {
     public class BudgetsController : Controller
     {
-        // Static list to store budgets in memory (no database yet)
+        // Public static list so other controllers (like HomeController) can read budgets
         // "static" means the list is shared across all requests and persists while the app is running
-        private static List<Budget> _budgets = new List<Budget>
+        public static List<Budget> _budgets = new List<Budget>
         {
             // Some sample data to start with
             new Budget { Id = 1, Name = "Monthly Groceries", Amount = 400.00m, CategoryId = 1, CategoryName = "Groceries", StartDate = new DateTime(2026, 4, 1), EndDate = new DateTime(2026, 4, 30) },
