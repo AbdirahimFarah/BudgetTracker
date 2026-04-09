@@ -11,6 +11,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Fix for DateTime timezone error with PostgreSQL.
+// By default, Npgsql requires DateTime values to have Kind=Utc when writing to
+// 'timestamp with time zone' columns. This switch enables legacy behaviour so
+// that DateTime values with Kind=Unspecified (the default in C#) are accepted.
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

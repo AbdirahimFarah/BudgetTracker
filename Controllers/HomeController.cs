@@ -1,3 +1,4 @@
+using BudgetTracker.Data;
 using BudgetTracker.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -8,9 +9,14 @@ namespace BudgetTracker.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        // AppDbContext gives us access to the database tables
+        private readonly AppDbContext _db;
+
+        // ASP.NET Core injects both ILogger and AppDbContext automatically
+        public HomeController(ILogger<HomeController> logger, AppDbContext db)
         {
             _logger = logger;
+            _db = db;
         }
 
         public IActionResult Index()
@@ -22,9 +28,9 @@ namespace BudgetTracker.Controllers
         // Builds a summary of all spending and compares it against budgets
         public IActionResult Dashboard()
         {
-            // Grab the shared data from the other controllers
-            var transactions = TransactionsController._transactions;
-            var budgets = BudgetsController._budgets;
+            // Fetch the data we need from the database
+            var transactions = _db.Transactions.ToList();
+            var budgets = _db.Budgets.ToList();
 
             // --- Total Spending ---
             // Add up every transaction amount to get the grand total
@@ -36,7 +42,7 @@ namespace BudgetTracker.Controllers
             var spendingByCategory = transactions
                 .GroupBy(t => t.CategoryName ?? "Uncategorized")
                 .ToDictionary(
-                    group => group.Key,          // key   = category name
+                    group => group.Key,               // key   = category name
                     group => group.Sum(t => t.Amount) // value = total spent in that category
                 );
 

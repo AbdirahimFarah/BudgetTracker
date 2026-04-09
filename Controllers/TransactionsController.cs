@@ -1,3 +1,4 @@
+using BudgetTracker.Data;
 using BudgetTracker.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -5,21 +6,22 @@ namespace BudgetTracker.Controllers
 {
     public class TransactionsController : Controller
     {
-        // Public static list so other controllers (like HomeController) can read transactions
-        // "static" means the list is shared across all requests and persists while the app is running
-        public static List<Transaction> _transactions = new List<Transaction>
+        // AppDbContext gives us access to the database tables
+        private readonly AppDbContext _db;
+
+        // ASP.NET Core will automatically inject AppDbContext here when the controller is created
+        public TransactionsController(AppDbContext db)
         {
-            // Some sample data to start with
-            new Transaction { Id = 1, Description = "Grocery shopping", Amount = 85.50m, Date = DateTime.Now.AddDays(-3), CategoryId = 1, CategoryName = "Groceries" },
-            new Transaction { Id = 2, Description = "Electric bill", Amount = 120.00m, Date = DateTime.Now.AddDays(-7), CategoryId = 2, CategoryName = "Utilities" },
-            new Transaction { Id = 3, Description = "Coffee", Amount = 4.75m, Date = DateTime.Now.AddDays(-1), CategoryId = 3, CategoryName = "Entertainment" }
-        };
+            _db = db;
+        }
 
         // GET: /Transactions
         // Shows all transactions in a list
         public IActionResult Index()
         {
-            return View(_transactions);
+            // Fetch all transactions from the database
+            var transactions = _db.Transactions.ToList();
+            return View(transactions);
         }
 
         // GET: /Transactions/Create
@@ -27,13 +29,13 @@ namespace BudgetTracker.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            // Pass the list of categories to the view so we can show a dropdown
-            ViewBag.Categories = CategoriesController._categories;
+            // Pass the list of categories from the database so we can show a dropdown
+            ViewBag.Categories = _db.Categories.ToList();
             return View();
         }
 
         // POST: /Transactions/Create
-        // Receives the form data and adds the transaction to the list
+        // Receives the form data and saves the transaction to the database
         [HttpPost]
         public IActionResult Create(Transaction transaction)
         {
@@ -41,14 +43,14 @@ namespace BudgetTracker.Controllers
             if (!ModelState.IsValid)
             {
                 // If validation failed, pass categories again so the dropdown still works
-                ViewBag.Categories = CategoriesController._categories;
+                ViewBag.Categories = _db.Categories.ToList();
                 return View(transaction);
             }
 
             // Look up the category name based on the selected CategoryId and save it on the transaction
             if (transaction.CategoryId.HasValue)
             {
-                var selectedCategory = CategoriesController._categories
+                var selectedCategory = _db.Categories
                     .FirstOrDefault(c => c.Id == transaction.CategoryId.Value);
 
                 // If we found a matching category, store its name
@@ -58,11 +60,10 @@ namespace BudgetTracker.Controllers
                 }
             }
 
-            // Assign a new Id (just use current count + 1 for now)
-            transaction.Id = _transactions.Count + 1;
-
-            // Add the new transaction to our in-memory list
-            _transactions.Add(transaction);
+            // Add the new transaction to the database
+            // EF Core automatically assigns the Id (no need to set it manually)
+            _db.Transactions.Add(transaction);
+            _db.SaveChanges(); // Write the changes to the database
 
             // Redirect back to the Index page to see the updated list
             return RedirectToAction("Index");
