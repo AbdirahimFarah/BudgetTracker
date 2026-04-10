@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetTracker.Controllers
 {
-    // [Authorize] means only logged-in users can access any action in this controller
+    // only logged-in users can access any action in this controller
     [Authorize]
     public class CategoriesController : Controller
     {
