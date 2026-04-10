@@ -1,7 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using BudgetTracker.Data;
+using Auth0.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Auth0 authentication using settings from appsettings.json.
+// This sets up cookie-based authentication with Auth0 as the identity provider.
+builder.Services.AddAuth0WebAppAuthentication(options =>
+{
+    options.Domain = builder.Configuration["Auth0:Domain"]!;
+    options.ClientId = builder.Configuration["Auth0:ClientId"]!;
+    options.ClientSecret = builder.Configuration["Auth0:ClientSecret"]!;
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -32,6 +42,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// UseAuthentication must come before UseAuthorization.
+// It reads the auth cookie and populates User.Identity on each request.
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

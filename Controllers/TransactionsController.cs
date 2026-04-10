@@ -1,9 +1,12 @@
 using BudgetTracker.Data;
 using BudgetTracker.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetTracker.Controllers
 {
+    // [Authorize] means only logged-in users can access any action in this controller
+    [Authorize]
     public class TransactionsController : Controller
     {
         // AppDbContext gives us access to the database tables
