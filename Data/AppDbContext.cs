@@ -16,12 +16,13 @@ namespace BudgetTracker.Data
         // Each DbSet maps to a table named after the property (e.g. "Transactions").
 
         // Table for all income and expense transactions
-        public DbSet<Transaction> Transactions { get; set; }
+        // virtual allows Moq to override these properties in unit tests
+        public virtual DbSet<Transaction> Transactions { get; set; }
 
         // Table for spending categories (e.g. Food, Rent, Entertainment)
-        public DbSet<Category> Categories { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
 
         // Table for budget plans
-        public DbSet<Budget> Budgets { get; set; }
+        public virtual DbSet<Budget> Budgets { get; set; }
     }
 }
