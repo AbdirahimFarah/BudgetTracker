@@ -4,23 +4,39 @@
     ViewData["Title"] = "Add Category";
 }
 
-<h2>Add Category</h2>
+<!-- Centred card container; max-width keeps the form from stretching too wide on large screens -->
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12" style="max-width: 600px;">
+            <div class="card shadow p-4">
+                <div class="card-body">
+                    <h2 class="mb-4">Add Category</h2>
 
-<!-- asp-action posts the form to the Create POST action -->
-<form asp-action="Create" method="post">
+                    <!-- asp-action posts the form to the Create POST action -->
+                    <form asp-action="Create" method="post">
 
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label">Name</label>
-        <input asp-for="Name" class="form-control" placeholder="e.g. Groceries" />
-        <!-- Shows validation error message if Name is missing or too long -->
-        <span asp-validation-for="Name" class="text-danger"></span>
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label">Name</label>
+                            <input asp-for="Name" class="form-control" placeholder="e.g. Groceries" />
+                            <!-- Shows a validation error if Name is missing or too long -->
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <!-- Green Save button with a tick icon; grey Cancel button with an X icon -->
+                        <button type="submit" class="btn fw-semibold"
+                                style="background-color: #2d8a4e; color: white;">
+                            <i class="bi bi-check-circle me-1"></i> Save Category
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary ms-2">
+                            <i class="bi bi-x-circle me-1"></i> Cancel
+                        </a>
+
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <button type="submit" class="btn btn-success">Save Category</button>
-    <!-- Go back to the list without saving -->
-    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
-
-</form>
+</div>
 
 @section Scripts {
     <!-- Enables client-side validation (shows errors without a page reload) -->

@@ -4,104 +4,109 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<h1>Dashboard</h1>
+<div class="container py-3">
+    <h1 class="mb-4">Dashboard</h1>
 
-<!-- ===== Total Spending Card ===== -->
-<div class="card mb-4" style="max-width: 300px;">
-    <div class="card-body">
-        <h5 class="card-title">Total Spending</h5>
-        <!-- Display the grand total formatted as currency -->
-        <p class="card-text fs-3">@Model.TotalSpending.ToString("C")</p>
+    <!-- ===== Total Spending Card ===== -->
+    <!-- Dark background with white text makes this card visually prominent -->
+    <div class="card mb-4 shadow" style="max-width: 320px; background-color: #1a1f2e; color: white;">
+        <div class="card-body text-center py-4">
+            <!-- Cash stack icon above the amount -->
+            <i class="bi bi-cash-stack fs-1 mb-2 d-block"></i>
+            <h5 class="card-title text-white-50 mb-1">Total Spending</h5>
+            <!-- Display the grand total formatted with a £ sign -->
+            <p class="card-text display-6 fw-bold">£@Model.TotalSpending.ToString("N2")</p>
+        </div>
     </div>
-</div>
 
-<!-- ===== Spending by Category Table ===== -->
-<h2>Spending by Category</h2>
+    <!-- ===== Spending by Category Table ===== -->
+    <h2 class="mb-3">Spending by Category</h2>
 
-@if (Model.SpendingByCategory.Count == 0)
-{
-    <p>No transactions recorded yet.</p>
-}
-else
-{
-    <table class="table table-striped mb-4" style="max-width: 500px;">
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th>Amount Spent</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Loop through each category and its total -->
-            @foreach (var entry in Model.SpendingByCategory)
-            {
+    @if (Model.SpendingByCategory.Count == 0)
+    {
+        <p class="text-muted">No transactions recorded yet.</p>
+    }
+    else
+    {
+        <table class="table table-hover table-striped table-bordered mb-4" style="max-width: 500px;">
+            <thead class="table-dark">
                 <tr>
-                    <td>@entry.Key</td>
-                    <td>@entry.Value.ToString("C")</td>
+                    <th>Category</th>
+                    <th>Amount Spent</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
+            </thead>
+            <tbody>
+                <!-- Loop through each category and its total spend -->
+                @foreach (var entry in Model.SpendingByCategory)
+                {
+                    <tr>
+                        <td>@entry.Key</td>
+                        <td>£@entry.Value.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 
-<!-- ===== Budget Progress Table ===== -->
-<h2>Budget Progress</h2>
+    <!-- ===== Budget Progress Table ===== -->
+    <h2 class="mb-3">Budget Progress</h2>
 
-@if (Model.BudgetSummaries.Count == 0)
-{
-    <p>No budgets set up yet.</p>
-}
-else
-{
-    <table class="table table-bordered" style="max-width: 700px;">
-        <thead class="table-dark">
-            <tr>
-                <th>Budget</th>
-                <th>Budget Amount</th>
-                <th>Spent</th>
-                <th>Remaining</th>
-                <th>Progress</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var summary in Model.BudgetSummaries)
-            {
-                <!-- Calculate how much is left and what percentage has been used -->
-                decimal remaining = summary.BudgetAmount - summary.SpentAmount;
-                decimal percentUsed = summary.BudgetAmount > 0
-                    ? (summary.SpentAmount / summary.BudgetAmount) * 100
-                    : 0;
-
-                <!-- Cap the progress bar at 100% so it doesn't overflow visually -->
-                int barWidth = (int)Math.Min(percentUsed, 100);
-
-                <!-- Turn the bar red if over budget, yellow if close (>= 80%), green otherwise -->
-                string barColor = percentUsed >= 100 ? "bg-danger"
-                                : percentUsed >= 80  ? "bg-warning"
-                                                     : "bg-success";
+    @if (Model.BudgetSummaries.Count == 0)
+    {
+        <p class="text-muted">No budgets set up yet.</p>
+    }
+    else
+    {
+        <table class="table table-hover table-striped table-bordered" style="max-width: 750px;">
+            <thead class="table-dark">
                 <tr>
-                    <td>@summary.Name</td>
-                    <td>@summary.BudgetAmount.ToString("C")</td>
-                    <td>@summary.SpentAmount.ToString("C")</td>
-                    <!-- Show remaining in red if over budget -->
-                    <td class="@(remaining < 0 ? "text-danger fw-bold" : "")">
-                        @remaining.ToString("C")
-                    </td>
-                    <td style="min-width: 150px;">
-                        <!-- Bootstrap progress bar -->
-                        <div class="progress">
-                            <div class="progress-bar @barColor"
-                                 role="progressbar"
-                                 style="width: @barWidth%"
-                                 aria-valuenow="@barWidth"
-                                 aria-valuemin="0"
-                                 aria-valuemax="100">
-                                @((int)percentUsed)%
+                    <th>Budget</th>
+                    <th>Budget Amount</th>
+                    <th>Spent</th>
+                    <th>Remaining</th>
+                    <th>Progress</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var summary in Model.BudgetSummaries)
+                {
+                    <!-- Calculate how much is left and what percentage has been used -->
+                    decimal remaining = summary.BudgetAmount - summary.SpentAmount;
+                    decimal percentUsed = summary.BudgetAmount > 0
+                        ? (summary.SpentAmount / summary.BudgetAmount) * 100
+                        : 0;
+
+                    <!-- Cap the progress bar at 100% so it doesn't overflow the bar visually -->
+                    int barWidth = (int)Math.Min(percentUsed, 100);
+
+                    <!-- Colour rules: green under 75 %, amber 75–90 %, red above 90 % -->
+                    string barColor = percentUsed >= 90 ? "bg-danger"
+                                    : percentUsed >= 75 ? "bg-warning"
+                                                        : "bg-success";
+                    <tr>
+                        <td>@summary.Name</td>
+                        <td>£@summary.BudgetAmount.ToString("N2")</td>
+                        <td>£@summary.SpentAmount.ToString("N2")</td>
+                        <!-- Show remaining in red bold text if the budget has been exceeded -->
+                        <td class="@(remaining < 0 ? "text-danger fw-bold" : "")">
+                            £@remaining.ToString("N2")
+                        </td>
+                        <td style="min-width: 160px;">
+                            <!-- Bootstrap progress bar; colour class set by the Razor logic above -->
+                            <div class="progress">
+                                <div class="progress-bar @barColor"
+                                     role="progressbar"
+                                     style="width: @barWidth%"
+                                     aria-valuenow="@barWidth"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                    @((int)percentUsed)%
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

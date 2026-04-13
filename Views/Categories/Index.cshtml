@@ -4,36 +4,41 @@
     ViewData["Title"] = "Categories";
 }
 
-<h2>All Categories</h2>
+<div class="container py-3">
+    <!-- Heading and Add button sit side-by-side with space between them -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">All Categories</h2>
+        <!-- Green Add Category button with a plus icon -->
+        <a asp-action="Create" class="btn fw-semibold" style="background-color: #2d8a4e; color: white;">
+            <i class="bi bi-plus-circle me-1"></i> Add Category
+        </a>
+    </div>
 
-<!-- Link to go to the Create form -->
-<p>
-    <a asp-action="Create" class="btn btn-primary">+ Add Category</a>
-</p>
-
-<!-- Show a message if the list is empty -->
-@if (Model.Count == 0)
-{
-    <p>No categories yet. Add one above!</p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Loop through each category and display it as a table row -->
-            @foreach (var category in Model)
-            {
+    <!-- Show a message if there are no categories yet -->
+    @if (Model.Count == 0)
+    {
+        <p class="text-muted">No categories yet. Add one above!</p>
+    }
+    else
+    {
+        <!-- table-hover highlights a row on mouseover; table-striped alternates row colours -->
+        <table class="table table-hover table-striped table-bordered">
+            <thead class="table-dark">
                 <tr>
-                    <td>@category.Id</td>
-                    <td>@category.Name</td>
+                    <th>Id</th>
+                    <th>Name</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
+            </thead>
+            <tbody>
+                <!-- Loop through each category and display it as a table row -->
+                @foreach (var category in Model)
+                {
+                    <tr>
+                        <td>@category.Id</td>
+                        <td>@category.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

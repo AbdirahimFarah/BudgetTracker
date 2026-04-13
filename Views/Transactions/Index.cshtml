@@ -4,43 +4,48 @@
     ViewData["Title"] = "Transactions";
 }
 
-<h2>All Transactions</h2>
+<div class="container py-3">
+    <!-- Heading and Add button sit side-by-side with space between them -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">All Transactions</h2>
+        <!-- Green Add Transaction button with a plus icon -->
+        <a asp-action="Create" class="btn fw-semibold" style="background-color: #2d8a4e; color: white;">
+            <i class="bi bi-plus-circle me-1"></i> Add Transaction
+        </a>
+    </div>
 
-<!-- Link to go to the Create form -->
-<p>
-    <a asp-action="Create" class="btn btn-primary">+ Add Transaction</a>
-</p>
-
-<!-- Show a message if the list is empty -->
-@if (Model.Count == 0)
-{
-    <p>No transactions yet. Add one above!</p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Category</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Loop through each transaction and display it as a table row -->
-            @foreach (var transaction in Model)
-            {
+    <!-- Show a message if there are no transactions yet -->
+    @if (Model.Count == 0)
+    {
+        <p class="text-muted">No transactions yet. Add one above!</p>
+    }
+    else
+    {
+        <!-- table-hover highlights a row on mouseover; table-striped alternates row colours -->
+        <table class="table table-hover table-striped table-bordered">
+            <thead class="table-dark">
                 <tr>
-                    <td>@transaction.Id</td>
-                    <td>@transaction.Description</td>
-                    <td>@transaction.Amount.ToString("C")</td>
-                    <td>@transaction.Date.ToShortDateString()</td>
-                    <!-- Show the category name, or a dash if no category was selected -->
-                    <td>@(transaction.CategoryName ?? "-")</td>
+                    <th>Id</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Category</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
+            </thead>
+            <tbody>
+                <!-- Loop through each transaction and display it as a table row -->
+                @foreach (var transaction in Model)
+                {
+                    <tr>
+                        <td>@transaction.Id</td>
+                        <td>@transaction.Description</td>
+                        <td>£@transaction.Amount.ToString("N2")</td>
+                        <td>@transaction.Date.ToShortDateString()</td>
+                        <!-- Show the category name, or a dash if no category was selected -->
+                        <td>@(transaction.CategoryName ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
