@@ -1,0 +1,72 @@
+name: CI
+
+# Run this workflow on every push and pull request targeting the main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out the full git history.
+      #    SonarCloud needs the complete history to analyse blame/annotation data.
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Install the .NET 9 SDK.
+      #    .NET 9 is required because the solution uses the newer .slnx format.
+      #    It can still build projects that target net8.0.
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      # 3. Install the SonarCloud scanner as a global .NET tool.
+      #    This adds the `dotnet sonarscanner` command to the PATH.
+      - name: Install SonarCloud scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      # 4. Tell the SonarCloud scanner to start collecting data.
+      #    Everything between "begin" and "end" (build + test) will be analysed.
+      - name: Begin SonarCloud scan
+        run: |
+          dotnet sonarscanner begin \
+            /k:"AbdirahimFarah_BudgetTracker" \
+            /o:"AbdirahimFarah" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+
+      # 5. Restore all NuGet packages listed in the solution.
+      - name: Restore NuGet packages
+        run: dotnet restore BudgetTracker.slnx
+
+      # 6. Build the full solution in Release mode.
+      #    --no-restore skips a second restore since we just did it above.
+      - name: Build solution
+        run: dotnet build BudgetTracker.slnx --no-restore --configuration Release
+
+      # 7. Run the 6 xUnit unit tests and collect code coverage.
+      #    --filter excludes the E2E Playwright tests (they need a running browser/server).
+      #    --collect:"XPlat Code Coverage" activates the Coverlet data collector.
+      #    The trailing -- ... argument tells Coverlet to use OpenCover XML format,
+      #    which is what SonarCloud expects.
+      - name: Run unit tests with coverage
+        run: |
+          dotnet test BudgetTracker.Tests/BudgetTracker.Tests.csproj \
+            --no-build \
+            --configuration Release \
+            --filter "FullyQualifiedName!~E2E" \
+            --collect:"XPlat Code Coverage" \
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+
+      # 8. Send all collected analysis data to SonarCloud.
+      #    Results will appear in the SonarCloud dashboard after this step completes.
+      - name: End SonarCloud scan
+        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

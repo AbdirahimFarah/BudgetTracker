@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+
+  # ── PostgreSQL 15 database ─────────────────────────────────────────────────
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: BudgetTracker       # name of the database to create on first run
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      # Named volume so database data is kept when the container is restarted
+      - postgres_data:/var/lib/postgresql/data
+    # Health check: Docker waits until pg_isready reports success before
+    # allowing the app service to start. This prevents connection errors at boot.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── BudgetTracker web application ─────────────────────────────────────────
+  app:
+    build: .                           # build the image using the Dockerfile in this directory
+    restart: unless-stopped
+    ports:
+      - "8080:8080"                    # forward localhost:8080 → container port 8080
+    environment:
+      # Override the connection string from appsettings.json.
+      # ASP.NET Core maps double-underscore (__) to a colon (:) in config keys,
+      # so this sets ConnectionStrings:DefaultConnection.
+      # "db" is the hostname of the postgres service defined above.
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=BudgetTracker;Username=postgres;Password=postgres
+
+      # Auth0 settings – replace these placeholder values with your real
+      # Auth0 application credentials before running the containers.
+      - Auth0__Domain=YOUR_AUTH0_DOMAIN
+      - Auth0__ClientId=YOUR_AUTH0_CLIENT_ID
+      - Auth0__ClientSecret=YOUR_AUTH0_CLIENT_SECRET
+
+    # Do not start the app until the database health check passes.
+    depends_on:
+      db:
+        condition: service_healthy
+
+# Declare the named volume used by the db service above.
+volumes:
+  postgres_data:
