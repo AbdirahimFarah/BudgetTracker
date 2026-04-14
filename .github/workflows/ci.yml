@@ -38,7 +38,7 @@ jobs:
         run: |
           dotnet sonarscanner begin \
             /k:"AbdirahimFarah_BudgetTracker" \
-            /o:"AbdirahimFarah" \
+            /o:"abdirahimfarah" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
