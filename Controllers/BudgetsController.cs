@@ -71,5 +71,83 @@ namespace BudgetTracker.Controllers
             // Redirect back to the Index page to see the updated list
             return RedirectToAction("Index");
         }
+
+        // GET: /Budgets/Edit/5
+        // Shows the edit form pre-filled with the existing budget data
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            // Find the budget in the database by its id
+            var budget = _db.Budgets.FirstOrDefault(b => b.Id == id);
+
+            // If no budget was found with that id, return a 404 page
+            if (budget == null)
+            {
+                return NotFound();
+            }
+
+            // Pass categories so the dropdown still works
+            ViewBag.Categories = _db.Categories.ToList();
+            return View(budget);
+        }
+
+        // POST: /Budgets/Edit/5
+        // Receives the updated form data and saves it to the database
+        [HttpPost]
+        public IActionResult Edit(Budget budget)
+        {
+            // Check that all required fields are valid
+            if (!ModelState.IsValid)
+            {
+                // Pass categories again so the dropdown still works
+                ViewBag.Categories = _db.Categories.ToList();
+                return View(budget);
+            }
+
+            // Look up the category name based on the selected CategoryId
+            if (budget.CategoryId.HasValue)
+            {
+                var selectedCategory = _db.Categories
+                    .FirstOrDefault(c => c.Id == budget.CategoryId.Value);
+
+                if (selectedCategory != null)
+                {
+                    budget.CategoryName = selectedCategory.Name;
+                }
+            }
+            else
+            {
+                // Clear the category name if no category was selected
+                budget.CategoryName = null;
+            }
+
+            // Tell EF Core this budget has been changed so it updates the database row
+            _db.Budgets.Update(budget);
+            _db.SaveChanges(); // Write the changes to the database
+
+            return RedirectToAction("Index");
+        }
+
+        // POST: /Budgets/Delete/5
+        // Deletes the budget with the given id from the database
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id)
+        {
+            // Find the budget to delete
+            var budget = _db.Budgets.FirstOrDefault(b => b.Id == id);
+
+            // If no budget was found, return a 404 page
+            if (budget == null)
+            {
+                return NotFound();
+            }
+
+            // Remove the budget from the database and save
+            _db.Budgets.Remove(budget);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
     }
 }

@@ -1,0 +1,74 @@
+@model BudgetTracker.Models.Transaction
+
+@{
+    ViewData["Title"] = "Edit Transaction";
+}
+
+<!-- Centred card container; max-width keeps the form from stretching too wide on large screens -->
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12" style="max-width: 600px;">
+            <div class="card shadow p-4">
+                <div class="card-body">
+                    <h2 class="mb-4">Edit Transaction</h2>
+
+                    <!-- asp-action posts the form to the Edit POST action -->
+                    <form asp-action="Edit" method="post">
+
+                        <!-- Hidden field sends the transaction Id so EF Core knows which row to update -->
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <input asp-for="Description" class="form-control" placeholder="e.g. Grocery shopping" />
+                            <!-- Shows a validation error if Description is missing or too long -->
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <!-- Label uses £ instead of $ -->
+                            <label asp-for="Amount" class="form-label">Amount (£)</label>
+                            <input asp-for="Amount" class="form-control" placeholder="e.g. £25.00" />
+                            <!-- Shows a validation error if Amount is invalid -->
+                            <span asp-validation-for="Amount" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Date" class="form-label">Date</label>
+                            <input asp-for="Date" type="date" class="form-control" />
+                            <!-- Shows a validation error if Date is missing -->
+                            <span asp-validation-for="Date" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="CategoryId" class="form-label">Category</label>
+                            <!-- Dropdown built from the categories list passed via ViewBag -->
+                            <select asp-for="CategoryId" class="form-select">
+                                <option value="">-- Select a Category --</option>
+                                @foreach (var category in ViewBag.Categories)
+                                {
+                                    <option value="@category.Id">@category.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Green Save button with a tick icon; grey Cancel button with an X icon -->
+                        <button type="submit" class="btn fw-semibold"
+                                style="background-color: #2d8a4e; color: white;">
+                            <i class="bi bi-check-circle me-1"></i> Save Transaction
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary ms-2">
+                            <i class="bi bi-x-circle me-1"></i> Cancel
+                        </a>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Enables client-side validation (shows errors without a page reload) -->
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

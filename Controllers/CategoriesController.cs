@@ -55,5 +55,62 @@ namespace BudgetTracker.Controllers
             // Redirect back to the Index page to see the updated list
             return RedirectToAction("Index");
         }
+
+        // GET: /Categories/Edit/5
+        // Shows the edit form pre-filled with the existing category data
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            // Find the category in the database by its id
+            var category = _db.Categories.FirstOrDefault(c => c.Id == id);
+
+            // If no category was found with that id, return a 404 page
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            return View(category);
+        }
+
+        // POST: /Categories/Edit/5
+        // Receives the updated form data and saves it to the database
+        [HttpPost]
+        public IActionResult Edit(Category category)
+        {
+            // Check that all required fields are valid
+            if (!ModelState.IsValid)
+            {
+                return View(category);
+            }
+
+            // Tell EF Core this category has been changed so it updates the database row
+            _db.Categories.Update(category);
+            _db.SaveChanges(); // Write the changes to the database
+
+            return RedirectToAction("Index");
+        }
+
+        // POST: /Categories/Delete/5
+        // Deletes the category with the given id from the database
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id)
+        {
+            // Find the category to delete
+            var category = _db.Categories.FirstOrDefault(c => c.Id == id);
+
+            // If no category was found, return a 404 page
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            // Remove the category from the database and save
+            _db.Categories.Remove(category);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
     }
 }
