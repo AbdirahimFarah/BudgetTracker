@@ -18,7 +18,6 @@ COPY . ./
 # --no-restore skips a second restore since we just did it above.
 RUN dotnet publish BudgetTracker.csproj \
         --configuration Release \
-        --no-restore \
         --output /app/publish
 
 
