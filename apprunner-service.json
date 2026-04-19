@@ -1,0 +1,48 @@
+{
+  "ServiceName": "budgettracker",
+  "SourceConfiguration": {
+    "AuthenticationConfiguration": {
+      "AccessRoleArn": "arn:aws:iam::642867834453:role/BudgetTrackerAppRunnerAccessRole"
+    },
+    "AutoDeploymentsEnabled": false,
+    "ImageRepository": {
+      "ImageIdentifier": "642867834453.dkr.ecr.eu-west-1.amazonaws.com/budgettracker:latest",
+      "ImageConfiguration": {
+        "Port": "8080",
+        "RuntimeEnvironmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Production",
+          "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true"
+        },
+        "RuntimeEnvironmentSecrets": {
+          "ConnectionStrings__DefaultConnection": "arn:aws:secretsmanager:eu-west-1:642867834453:secret:budgettracker/db-connection-bFM9ha",
+          "Auth0__Domain": "arn:aws:secretsmanager:eu-west-1:642867834453:secret:budgettracker/auth0-domain-8tCuML",
+          "Auth0__ClientId": "arn:aws:secretsmanager:eu-west-1:642867834453:secret:budgettracker/auth0-client-id-hqpc8X",
+          "Auth0__ClientSecret": "arn:aws:secretsmanager:eu-west-1:642867834453:secret:budgettracker/auth0-client-secret-LbEi1w"
+        }
+      },
+      "ImageRepositoryType": "ECR"
+    }
+  },
+  "InstanceConfiguration": {
+    "Cpu": "1 vCPU",
+    "Memory": "2 GB",
+    "InstanceRoleArn": "arn:aws:iam::642867834453:role/BudgetTrackerAppRunnerInstanceRole"
+  },
+  "NetworkConfiguration": {
+    "EgressConfiguration": {
+      "EgressType": "VPC",
+      "VpcConnectorArn": "arn:aws:apprunner:eu-west-1:642867834453:vpcconnector/budgettracker-connector/1/b83da737f3c64edf970652b09b160f92"
+    },
+    "IngressConfiguration": {
+      "IsPubliclyAccessible": true
+    }
+  },
+  "HealthCheckConfiguration": {
+    "Protocol": "HTTP",
+    "Path": "/",
+    "Interval": 10,
+    "Timeout": 5,
+    "HealthyThreshold": 1,
+    "UnhealthyThreshold": 5
+  }
+}
