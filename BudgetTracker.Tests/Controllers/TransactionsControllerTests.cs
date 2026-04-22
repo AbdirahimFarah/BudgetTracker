@@ -63,8 +63,8 @@ namespace BudgetTracker.Tests.Controllers
             var result = controller.Index();
 
             // Assert: the action returned a view (not a redirect or an error page)
-            //Assert.IsType<ViewResult>(result);
-            Assert.IsType<RedirectToActionResult>(result);
+            Assert.IsType<ViewResult>(result);
+            //Assert.IsType<RedirectToActionResult>(result);
         }
 
         // Test 2: Create POST with valid data should save and redirect to Index
