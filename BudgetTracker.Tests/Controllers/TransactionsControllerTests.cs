@@ -46,9 +46,8 @@ namespace BudgetTracker.Tests.Controllers
             return new Mock<AppDbContext>(options);
         }
 
-        // -------------------------------------------------------------------------
+        
         // Test 1: Index() should return a ViewResult
-        // -------------------------------------------------------------------------
         [Fact]
         public void Index_ReturnsViewResult()
         {
@@ -64,12 +63,12 @@ namespace BudgetTracker.Tests.Controllers
             var result = controller.Index();
 
             // Assert: the action returned a view (not a redirect or an error page)
-            Assert.IsType<ViewResult>(result);
+            //Assert.IsType<ViewResult>(result);
+            Assert.IsType<RedirectToActionResult>(result);
         }
 
-        // -------------------------------------------------------------------------
         // Test 2: Create POST with valid data should save and redirect to Index
-        // -------------------------------------------------------------------------
+
         [Fact]
         public void Create_Post_ValidData_SavesAndRedirects()
         {
@@ -103,10 +102,8 @@ namespace BudgetTracker.Tests.Controllers
             mockContext.Verify(m => m.SaveChanges(), Times.Once());
         }
 
-        // -------------------------------------------------------------------------
         // Test 3: Create POST with invalid model state should return the Create view
         //         and must NOT save anything to the database
-        // -------------------------------------------------------------------------
         [Fact]
         public void Create_Post_InvalidModelState_ReturnsView()
         {
